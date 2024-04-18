@@ -86,7 +86,7 @@ def pull_process_and_push_data(device, device_attendance_logs=None):
     attendance_success_logger = setup_logger(attendance_success_log_file, '/'.join([config.LOGS_DIRECTORY, attendance_success_log_file])+'.log')
     attendance_failed_logger = setup_logger(attendance_failed_log_file, '/'.join([config.LOGS_DIRECTORY, attendance_failed_log_file])+'.log')
     if not device_attendance_logs:
-        device_attendance_logs = get_all_attendance_from_device(device['ip'], device_id=device['device_id'], clear_from_device_on_fetch=device['clear_from_device_on_fetch'])
+        device_attendance_logs = get_all_attendance_from_device(device['ip'], password=device['password'], device_id=device['device_id'], clear_from_device_on_fetch=device['clear_from_device_on_fetch'])
         if not device_attendance_logs:
             return
     # for finding the last successfull push and restart from that point (or) from a set 'config.IMPORT_START_DATE' (whichever is later)
@@ -140,9 +140,9 @@ def pull_process_and_push_data(device, device_attendance_logs=None):
                 raise Exception('API Call to ERPNext Failed.')
 
 
-def get_all_attendance_from_device(ip, port=4370, timeout=30, device_id=None, clear_from_device_on_fetch=False):
+def get_all_attendance_from_device(ip, port=4370, timeout=30, password=0, device_id=None, clear_from_device_on_fetch=False):
     #  Sample Attendance Logs [{'punch': 255, 'user_id': '22', 'uid': 12349, 'status': 1, 'timestamp': datetime.datetime(2019, 2, 26, 20, 31, 29)},{'punch': 255, 'user_id': '7', 'uid': 7, 'status': 1, 'timestamp': datetime.datetime(2019, 2, 26, 20, 31, 36)}]
-    zk = ZK(ip, port=port, timeout=timeout)
+    zk = ZK(ip, port=port, timeout=timeout, password=password)
     conn = None
     attendances = []
     try:
